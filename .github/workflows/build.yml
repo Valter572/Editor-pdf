@@ -1,10 +1,6 @@
-name: Build Executavel
+name: Build Manipulapdfs
 
-on:
-  workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
+on: [workflow_dispatch, push]
 
 permissions:
   contents: write
@@ -27,23 +23,13 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Gerar executavel
-        run: >
-          pyinstaller --onefile --noconsole
-          --name Extrator
-          --hidden-import=win32timezone
-          main.py
+      - name: Gerar executaveis
+        run: pyinstaller --clean --noconfirm Manipulapdfs.spec
 
       - name: Guardar artefato
         uses: actions/upload-artifact@v4
         with:
-          name: Extrator-windows
-          path: dist/Extrator.exe
-
-      - name: Publicar Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/Extrator.exe
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: Manipulapdfs-windows
+          path: |
+            dist/Manipulapdfs.exe
+            dist/Manipulapdfs-cli.exe
